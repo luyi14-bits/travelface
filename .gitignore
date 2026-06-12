@@ -1,0 +1,29 @@
+# 环境密钥
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Streamlit 运行时
+.streamlit/machine_id_v4
+
+# 虚拟环境
+venv/
+.venv/
+
+# 模型权重（太大且需手动下载）
+*.h5
+*.tflite
+!assets/blaze_face_short_range.tflite
+
+# IDE
+.idea/
+.vscode/
+
+# Trae IDE
+.trae/
+
+# 旧版本快照（如不需要上传可保留此条）
+# versions/

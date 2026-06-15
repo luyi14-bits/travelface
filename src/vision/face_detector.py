@@ -2,7 +2,7 @@ import numpy as np
 
 
 class FaceDetector:
-    """纯 numpy 肤色检测人脸定位器 - 保守策略：最多 1 个结果"""
+    """纯 numpy 人脸定位器 - 宽松肤色检测 + 位置/尺寸约束"""
 
     def __init__(self, min_confidence: float = 0.5):
         self._min_confidence = min_confidence
@@ -12,34 +12,24 @@ class FaceDetector:
         skin_mask = self._skin_mask(image)
 
         skin_ratio = np.sum(skin_mask) / (h * w)
-        if skin_ratio < 0.015:
+        if skin_ratio < 0.012:
             return self._center_guess(image, w, h)
 
         regions = self._find_regions(skin_mask)
-        faces = self._filter_face_regions(regions, w, h, image)
+        faces = self._filter_best_face(regions, w, h, image)
         return faces
 
     # ── 肤色掩膜 ──────────────────────────────────
 
     def _skin_mask(self, image: np.ndarray) -> np.ndarray:
-        """YCbCr + RGB 双重校验肤色检测"""
+        """宽松版 YCbCr —— 只用经典学术范围，不加 RGB 限制"""
         img = image.astype(np.float32)
         r, g, b = img[:, :, 0], img[:, :, 1], img[:, :, 2]
 
-        # YCbCr 肤色
         cb = 128.0 - 0.168736 * r - 0.331264 * g + 0.5 * b
         cr = 128.0 + 0.5 * r - 0.418688 * g - 0.081312 * b
-        skin_ycbcr = (cb >= 80) & (cb <= 125) & (cr >= 136) & (cr <= 170)
 
-        # RGB 肤色约束
-        rgb_valid = (
-            (r > 95) & (g > 40) & (b > 20) &
-            (np.maximum(np.maximum(r, g), b) - np.minimum(np.minimum(r, g), b) > 15) &
-            (np.abs(r - g) > 15) &
-            (r > g) & (r > b)
-        )
-
-        return skin_ycbcr & rgb_valid
+        return (cb >= 77) & (cb <= 127) & (cr >= 133) & (cr <= 173)
 
     # ── 连通域 ────────────────────────────────────
 
@@ -52,7 +42,7 @@ class FaceDetector:
             for x in range(0, w, 2):
                 if mask[y, x] and not visited[y, x]:
                     region = self._flood_fill(mask, visited, x, y)
-                    if region and region["pixels"] >= 120:
+                    if region and region["pixels"] >= 60:
                         regions.append(region)
         return regions
 
@@ -84,10 +74,10 @@ class FaceDetector:
             "fill_ratio": fill_ratio,
         }
 
-    # ── 筛选 ──────────────────────────────────────
+    # ── 只取最优一个 ──────────────────────────────
 
-    def _filter_face_regions(self, regions: list[dict], img_w: int, img_h: int,
-                             image: np.ndarray) -> list[dict]:
+    def _filter_best_face(self, regions: list[dict], img_w: int, img_h: int,
+                          image: np.ndarray) -> list[dict]:
         img_area = img_w * img_h
         best_score = -999.0
         best_region = None
@@ -95,48 +85,41 @@ class FaceDetector:
         for r in regions:
             aspect = r["w"] / max(r["h"], 1)
 
-            # 1. 尺寸
-            if r["area"] < img_area * 0.01 or r["area"] > img_area * 0.30:
+            # 尺寸：占图片 0.8% ~ 35%
+            if r["area"] < img_area * 0.008 or r["area"] > img_area * 0.35:
                 continue
 
-            # 2. 最小像素
-            if r["pixels"] < 500:
+            # 最少 200 个肤色像素
+            if r["pixels"] < 200:
                 continue
 
-            # 3. 纵横比
-            if aspect < 0.68 or aspect > 1.55:
+            # 纵横比 0.6~1.7
+            if aspect < 0.6 or aspect > 1.7:
                 continue
 
-            # 4. 填充率
-            if r["fill_ratio"] < 0.45:
+            # 填充率 >= 35%
+            if r["fill_ratio"] < 0.35:
                 continue
 
-            # 5. 纹理
-            crop = image[r["y"]:r["y"] + r["h"], r["x"]:r["x"] + r["w"]]
-            gray = np.mean(crop, axis=2) if len(crop.shape) == 3 else crop
-            texture = float(np.std(gray))
-            if texture < 18:
-                continue
-
-            # 6. 位置：人脸应在画面上部 15%~50% 之间
+            # 位置：人脸中心在画面上 5%~60% 高度
             cy_norm = (r["y"] + r["h"] / 2) / img_h
             cx_norm = (r["x"] + r["w"] / 2) / img_w
 
-            if cy_norm < 0.10 or cy_norm > 0.55:
+            if cy_norm < 0.05 or cy_norm > 0.60:
                 continue
 
             pos_x = 1.0 - abs(cx_norm - 0.5) * 2.0
-            pos_y = 1.0 - abs(cy_norm - 0.32) * 3.0
+            pos_y = 1.0 - abs(cy_norm - 0.33) * 2.5
             pos_score = max(0.0, pos_x * 0.5 + pos_y * 0.5)
 
-            # 综合打分
-            score = r["fill_ratio"] * 0.50 + pos_score * 0.38 + min(1.0, r["pixels"] / (img_area * 0.04)) * 0.12
+            size_score = min(1.0, r["pixels"] / max(img_area * 0.015, 1))
+            score = r["fill_ratio"] * 0.50 + pos_score * 0.30 + size_score * 0.20
 
             if score > best_score:
                 best_score = score
                 best_region = r
 
-        if best_region is None or best_score < 0.68:
+        if best_region is None or best_score < 0.42:
             return self._center_guess(image, img_w, img_h)
 
         rec = best_region
@@ -149,8 +132,6 @@ class FaceDetector:
         crop = image[y1:y2, x1:x2]
 
         return [{"box": (x1, y1, x2 - x1, y2 - y1), "crop": crop, "detector": "skin_color"}]
-
-    # ── 降级兜底 ──────────────────────────────────
 
     def _center_guess(self, image: np.ndarray, img_w: int, img_h: int) -> list[dict]:
         face_w = int(img_w * 0.30)

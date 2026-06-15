@@ -133,10 +133,22 @@ class FaceDetector:
             return self._center_guess(image, img_w, img_h)
 
         scored.sort(key=lambda x: x[0], reverse=True)
-        scored = scored[:3]
+
+        filtered = []
+        for score, rec in scored:
+            if score < 0.55:
+                continue
+            if filtered and score < filtered[-1][0] * 0.55:
+                continue
+            filtered.append((score, rec))
+            if len(filtered) >= 5:
+                break
+
+        if not filtered:
+            return self._center_guess(image, img_w, img_h)
 
         results = []
-        for _, rec in scored:
+        for _, rec in filtered:
             pad_x = int(rec["w"] * 0.12)
             pad_y = int(rec["h"] * 0.12)
             x1 = max(0, rec["x"] - pad_x)

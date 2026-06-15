@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelFace 项目流程图</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #0b0b2a 0%, #1a1a4a 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #fff;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 {
+            text-align: center; font-size: 2rem; margin-bottom: 30px;
+            background: linear-gradient(90deg, #00d2ff, #7b68ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .diagram-container {
+            background: #fff; border-radius: 16px;
+            padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .mermaid { display: flex; justify-content: center; }
+        .legend {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .legend-item {
+            background: rgba(255,255,255,0.1); border-radius: 12px; padding: 20px;
+        }
+        .legend-item h3 { color: #00d2ff; margin-bottom: 10px; font-size: 1.1rem; }
+        .legend-item p { color: #ccc; line-height: 1.6; font-size: 0.9rem; }
+        .tech-tag {
+            display: inline-block;
+            background: rgba(123,104,238,0.3); color: #b4a7ff;
+            padding: 2px 8px; border-radius: 4px;
+            font-size: 0.8rem; margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TravelFace 项目流程图</h1>
+
+        <div class="diagram-container">
+            <div class="mermaid">
+flowchart TB
+    subgraph upload["📤 上传阶段"]
+        A[用户上传照片] --> B{图片格式验证}
+        B -->|JPG/PNG| C[Pillow 读取图片<br/>→ RGB ndarray]
+        B -->|格式错误| E[提示错误信息]
+    end
+
+    subgraph detect["🔍 人脸检测阶段"]
+        C --> F["NumPy YCbCr 肤色检测<br/>+ Flood Fill 连通域"]
+        F --> G{肤色像素 > 1.2%?}
+        G -->|否| H[画面中央猜测<br/>居中偏上 30%×35%]
+        G -->|是| I[提取肤色连通域]
+        I --> J{六层筛选<br/>尺寸/纵横比/填充率/<br/>位置/纹理/综合打分}
+        J -->|通过| K[最优区域 + 12% padding]
+        J -->|未通过| H
+    end
+
+    subgraph analyze["📊 用户画像 & 情绪分析"]
+        H --> L[裁剪人脸区域]
+        K --> L
+        L --> M["并行执行"]
+        M --> N["NumPy 亮度<br/>→ 年龄段"]
+        M --> O["NumPy 亮度/对比度<br/>→ 情绪分类"]
+        N --> P[少年/青年/中年/中老年]
+        O --> Q[开心/悲伤/中性]
+        P --> R[构建用户画像]
+        Q --> R
+    end
+
+    subgraph recommend["🤖 旅行推荐阶段"]
+        R --> S{检查 LLM API 可用性}
+        S -->|可用| T[调用 OpenAI 兼容 API]
+        S -->|不可用| U[使用模拟数据]
+        T --> V[构建用户提示词]
+        U --> V
+        V --> W[LLM 生成 JSON 响应]
+    end
+
+    subgraph display["📱 结果展示阶段"]
+        W --> X[解析旅行路线]
+        X --> Y[渲染分析结果卡片]
+        Y --> Z[显示人脸标注图片]
+        Z --> AA[展示旅行推荐卡片]
+    end
+
+    E --> END([结束])
+
+    style A fill:#4a90d9,color:#fff
+    style F fill:#ff6b6b,color:#fff
+    style N fill:#20b2aa,color:#fff
+    style O fill:#20b2aa,color:#fff
+    style T fill:#ff6b6b,color:#fff
+    style U fill:#ffa500,color:#fff
+    style AA fill:#2ecc71,color:#fff
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <h3>🔍 人脸检测</h3>
+                <p>
+                    <span class="tech-tag">NumPy</span>
+                    <span class="tech-tag">YCbCr 肤色</span>
+                    <span class="tech-tag">Flood Fill</span>
+                    <br><br>
+                    纯 NumPy 实现，将 RGB 转换到 YCbCr 色彩空间提取肤色掩膜，
+                    再用 Flood Fill 找连通域，经六层校验筛选最优人脸区域。
+                </p>
+            </div>
+            <div class="legend-item">
+                <h3>👤 用户画像 & 情绪</h3>
+                <p>
+                    <span class="tech-tag">NumPy 亮度</span>
+                    <span class="tech-tag">RGB 通道比</span>
+                    <span class="tech-tag">对比度</span>
+                    <br><br>
+                    基于人脸裁剪区域的亮度梯度估年龄、RGB 红润度推性别、
+                    亮度+对比度判情绪，全部基于 NumPy 图像特征。
+                </p>
+            </div>
+            <div class="legend-item">
+                <h3>✈️ 旅行推荐</h3>
+                <p>
+                    <span class="tech-tag">OpenAI API</span>
+                    <span class="tech-tag">Mock Fallback</span>
+                    <br><br>
+                    基于用户画像和情绪生成个性化旅行路线，
+                    API 不可用时自动降级到 12 条内置模拟路线。
+                </p>
+            </div>
+            <div class="legend-item">
+                <h3>🎨 UI 展示</h3>
+                <p>
+                    <span class="tech-tag">Streamlit</span>
+                    <span class="tech-tag">Light/Dark 主题</span>
+                    <span class="tech-tag">Hover 动效</span>
+                    <br><br>
+                    暗色/浅色双主题自动适配，按钮缩放 1.04x、
+                    Metric 上移 2px、旅行卡片上移 4px 等悬停动效。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+</body>
+</html>

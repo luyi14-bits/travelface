@@ -27,6 +27,11 @@ def inject_custom_css() -> None:
             background: linear-gradient(135deg, #7b2ff7, #00d2ff);
             color: white; border: none;
             border-radius: 10px; font-weight: 700;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .stButton button:hover {
+            transform: scale(1.04);
+            box-shadow: 0 4px 20px rgba(123, 47, 247, 0.45);
         }
 
         /* ===== 暗色模式 Metric 卡片 ===== */
@@ -34,6 +39,11 @@ def inject_custom_css() -> None:
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 14px; padding: 12px 16px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        [data-testid="stMetric"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(123, 47, 247, 0.25);
         }
         [data-testid="stMetric"] label { color: #a0a0d0 !important; }
         [data-testid="stMetric"] [data-testid="stMetricValue"] { color: #fff !important; }
@@ -55,6 +65,11 @@ def inject_custom_css() -> None:
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 18px; overflow: hidden; margin: 20px 0;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .travel-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.30);
         }
         .travel-card-body { padding: 20px; }
         .travel-card-title {
@@ -118,11 +133,21 @@ def inject_custom_css() -> None:
 
         [data-theme="light"] .stButton button {
             background: linear-gradient(135deg, #6a1fe7, #0098cc);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        [data-theme="light"] .stButton button:hover {
+            transform: scale(1.04);
+            box-shadow: 0 4px 18px rgba(106, 31, 231, 0.35);
         }
 
         [data-theme="light"] [data-testid="stMetric"] {
             background: rgba(0,0,0,0.04) !important;
             border: 1px solid rgba(0,0,0,0.08) !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        [data-theme="light"] [data-testid="stMetric"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
         }
         [data-theme="light"] [data-testid="stMetric"] label { color: #555 !important; }
         [data-theme="light"] [data-testid="stMetric"] [data-testid="stMetricValue"] { color: #1a1a2e !important; }

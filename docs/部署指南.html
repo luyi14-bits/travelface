@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelFace 部署指南</title>
+    <style>
+        @media print { body { font-size: 13px; } }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+            line-height: 1.85;
+            color: #2a2a4e;
+            background: #f4f6fc;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 30px 80px; }
+        .cover {
+            background: linear-gradient(135deg, #0b0b2a 0%, #1a1a4e 30%, #16213e 60%, #0f3460 100%);
+            color: #fff; padding: 60px 40px; text-align: center;
+            margin: -40px -30px 50px; border-radius: 0 0 24px 24px;
+        }
+        .cover h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+        .cover .subtitle { font-size: 1rem; color: #a0a0d0; }
+        .cover .badge {
+            display: inline-block; margin-top: 16px; padding: 5px 18px;
+            background: rgba(0,210,255,0.25); color: #90d0ff;
+            border-radius: 20px; font-size: 0.85rem;
+        }
+        h2 {
+            font-size: 1.45rem; color: #1a1a2e;
+            border-left: 4px solid #7b2ff7; padding-left: 14px;
+            margin: 40px 0 16px;
+        }
+        h3 { font-size: 1.15rem; color: #2a2a4e; margin: 24px 0 10px; }
+        p { margin-bottom: 14px; }
+        ul, ol { margin: 10px 0 16px 24px; }
+        li { margin-bottom: 6px; }
+        a { color: #6a1fe7; }
+        table {
+            width: 100%; border-collapse: collapse;
+            margin: 14px 0 20px; font-size: 0.93rem;
+        }
+        table th, table td {
+            border: 1px solid #d8d8e8;
+            padding: 10px 14px; text-align: left;
+        }
+        table th {
+            background: #e8ecf8; color: #2a2a4e;
+            font-weight: 700; white-space: nowrap;
+        }
+        table tr:nth-child(even) { background: #f8f9ff; }
+        code {
+            background: #f0f0f8; padding: 2px 7px;
+            border-radius: 4px; font-size: 0.9em;
+            font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+        }
+        pre {
+            background: #1a1a2e; color: #e0e0ff;
+            padding: 16px 22px; border-radius: 10px;
+            overflow-x: auto; font-size: 0.9rem;
+            line-height: 1.5; margin: 12px 0 20px;
+            font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+        }
+        pre code {
+            background: none; padding: 0; color: inherit; font-size: inherit;
+        }
+        blockquote {
+            border-left: 3px solid #ff9f43;
+            background: #fff8f0; padding: 12px 18px;
+            margin: 14px 0 20px; color: #666;
+            border-radius: 0 8px 8px 0;
+        }
+        .advantage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 16px; margin: 16px 0 24px;
+        }
+        .adv-card {
+            background: #fff; border: 1px solid #e0e0f0;
+            border-radius: 12px; padding: 20px; text-align: center;
+        }
+        .adv-card .icon { font-size: 2rem; margin-bottom: 8px; }
+        .adv-card .title { font-weight: 700; font-size: 1rem; color: #1a1a2e; margin-bottom: 4px; }
+        .adv-card .desc { color: #666; font-size: 0.85rem; line-height: 1.5; }
+        .step { margin: 12px 0; }
+        .step-num {
+            display: inline-block; width: 28px; height: 28px;
+            background: #7b2ff7; color: #fff; border-radius: 50%;
+            text-align: center; line-height: 28px;
+            font-weight: 700; font-size: 0.85rem; margin-right: 10px;
+        }
+        hr { border: none; border-top: 1px solid #d8d8e8; margin: 30px 0; }
+        .footer {
+            text-align: center; color: #999; font-size: 0.85rem;
+            margin-top: 60px; padding-top: 30px;
+            border-top: 1px solid #d8d8e8;
+        }
+        .warning { color: #c76b00; font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<div class="cover">
+    <h1>🚀 TravelFace 部署指南</h1>
+    <div class="subtitle">本地部署 · Streamlit Cloud 部署 · 零编译依赖</div>
+    <div class="badge">6 个纯 Python 包 · 总安装体积 &lt; 50MB</div>
+</div>
+
+<h2>前提条件</h2>
+<ul>
+    <li>项目已上传到 GitHub 仓库：<a href="https://github.com/luyi14-bits/travelface" target="_blank">luyi14-bits/travelface</a></li>
+    <li>拥有 GitHub 账号</li>
+    <li>Python 3.11+ (任意版本均可)</li>
+</ul>
+
+<h2>本地部署</h2>
+
+<pre><code>cd travelface
+pip install -r requirements.txt
+python -m streamlit run app.py
+
+# Windows 用户也可以双击 run.bat 一键启动</code></pre>
+
+<h3>依赖清单</h3>
+<table>
+    <tr><th>包名</th><th>版本</th><th>用途</th></tr>
+    <tr><td><code>streamlit</code></td><td>≥1.28.0</td><td>Web 框架</td></tr>
+    <tr><td><code>numpy</code></td><td>≥1.24.0</td><td>矩阵运算</td></tr>
+    <tr><td><code>Pillow</code></td><td>≥10.0.0</td><td>图像处理</td></tr>
+    <tr><td><code>openai</code></td><td>≥1.3.0</td><td>LLM API</td></tr>
+    <tr><td><code>requests</code></td><td>≥2.31.0</td><td>HTTP 客户端</td></tr>
+    <tr><td><code>python-dotenv</code></td><td>≥1.0.0</td><td>环境变量管理</td></tr>
+</table>
+
+<hr>
+
+<h2>Streamlit Cloud 部署</h2>
+
+<div class="step">
+    <span class="step-num">1</span>
+    <strong>登录</strong>：浏览器访问 <a href="https://share.streamlit.io/" target="_blank">share.streamlit.io</a>，使用 GitHub 账号登录
+</div>
+
+<div class="step">
+    <span class="step-num">2</span>
+    <strong>新建应用</strong>：点击右上角 <strong>"New app"</strong> 按钮
+</div>
+
+<div class="step">
+    <span class="step-num">3</span>
+    <strong>配置部署信息</strong>：
+</div>
+<table>
+    <tr><th>配置项</th><th>值</th></tr>
+    <tr><td>Repository</td><td><code>luyi14-bits/travelface</code></td></tr>
+    <tr><td>Branch</td><td><code>main</code></td></tr>
+    <tr><td>Main file path</td><td><code>app.py</code></td></tr>
+    <tr><td>Python Version</td><td>3.12（推荐）</td></tr>
+</table>
+
+<div class="step">
+    <span class="step-num">4</span>
+    <strong>设置 Secrets</strong>（可选）：点击 <strong>"Advanced settings"</strong>，在 <strong>Secrets</strong> 中以 TOML 格式添加：
+</div>
+<pre><code>OPENAI_API_KEY = "sk-你的API密钥"
+LLM_BASE_URL = "https://ark.cn-beijing.volces.com/api/v3"
+LLM_MODEL_NAME = "doubao-1.5-pro-32k"</code></pre>
+
+<blockquote>
+    <span class="warning">⚠ 注意</span>：必须使用 TOML 格式（<code>KEY = "value"</code>），不能用 <code>.env</code> 格式（<code>KEY=value</code>）。不配置 API Key 也可以正常使用，系统会自动切换到内置模拟推荐数据。
+</blockquote>
+
+<div class="step">
+    <span class="step-num">5</span>
+    <strong>部署</strong>：点击 <strong>"Deploy"</strong> 按钮，等待 1-2 分钟即可完成。
+</div>
+
+<hr>
+
+<h2>部署优势</h2>
+<div class="advantage-grid">
+    <div class="adv-card">
+        <div class="icon">📦</div>
+        <div class="title">零模型下载</div>
+        <div class="desc">全部视觉分析基于纯 NumPy，无需下载任何预训练权重</div>
+    </div>
+    <div class="adv-card">
+        <div class="icon">🪶</div>
+        <div class="title">轻量依赖</div>
+        <div class="desc">仅 6 个纯 Python 包，总安装体积 &lt; 50MB</div>
+    </div>
+    <div class="adv-card">
+        <div class="icon">⚡</div>
+        <div class="title">无编译</div>
+        <div class="desc">零 C 扩展，任意 Python 版本均可安装</div>
+    </div>
+    <div class="adv-card">
+        <div class="icon">🚀</div>
+        <div class="title">快速部署</div>
+        <div class="desc">首次部署 &lt; 2 分钟，比 DeepFace 方案快 10 倍</div>
+    </div>
+</div>
+
+<hr>
+
+<h2>资源限制</h2>
+<p>Streamlit Cloud 免费版：内存 1GB · 存储 1GB · 有效期 30 天 · 有限并发</p>
+<p>本项目完全在免费版限制内运行。</p>
+
+<h2>配置说明</h2>
+<table>
+    <tr><th>环境变量</th><th>说明</th><th>必需</th></tr>
+    <tr><td><code>OPENAI_API_KEY</code></td><td>OpenAI 兼容 API 密钥</td><td>推荐（无则模拟）</td></tr>
+    <tr><td><code>LLM_BASE_URL</code></td><td>API Base URL</td><td>仅非官方 API 时需要</td></tr>
+    <tr><td><code>LLM_MODEL_NAME</code></td><td>模型名称</td><td>可选（默认豆包）</td></tr>
+</table>
+
+<table>
+    <tr><th>API Key</th><th>推荐行为</th></tr>
+    <tr><td>已配置</td><td>调用真实 LLM，根据用户画像动态生成 3 条路线</td></tr>
+    <tr><td>未配置</td><td>使用内置 12 条预设路线（按情绪分类匹配）</td></tr>
+</table>
+
+<h2>更新部署</h2>
+<p>代码推送到 GitHub 后，在 Streamlit Cloud 管理界面点击 <strong>"Reboot"</strong> 即可拉取最新代码并重新部署。</p>
+
+<hr>
+
+<h2>故障排除</h2>
+
+<h3>依赖安装失败</h3>
+<ul>
+    <li>确认 <code>requirements.txt</code> 中无 <code>opencv-python-headless</code>、<code>mediapipe</code>、<code>deepface</code>、<code>tensorflow</code> 等编译型依赖</li>
+    <li>若之前部署过旧版本，建议点击 <strong>"Clear build cache"</strong> 清除缓存后再 Reboot</li>
+</ul>
+
+<h3>运行时错误</h3>
+<ul>
+    <li>确认 Secrets 格式为 TOML（<code>KEY = "value"</code>），不是 <code>.env</code> 格式（<code>KEY=value</code>）</li>
+    <li>查看 Streamlit Cloud 日志获取具体错误信息</li>
+</ul>
+
+<h3>人脸检测未框出人脸</h3>
+<ul>
+    <li>确保照片中肤色区域足够大且光照正常</li>
+    <li>肤色检测在极端光照或非人脸肤色物体上可能失败，系统会自动降级</li>
+</ul>
+
+<div class="footer">
+    <p>TravelFace · 计算机视觉课设项目 · 纯 NumPy 视觉管线</p>
+    <p>GitHub: github.com/luyi14-bits/travelface</p>
+</div>
+
+</div>
+</body>
+</html>

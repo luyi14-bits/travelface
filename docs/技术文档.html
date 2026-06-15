@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelFace 技术文档</title>
+    <style>
+        @media print { body { font-size: 12px; } .page-break { page-break-before: always; } }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+            line-height: 1.85;
+            color: #2a2a4e;
+            background: #f4f6fc;
+            padding: 0;
+        }
+        .container { max-width: 960px; margin: 0 auto; padding: 40px 30px 80px; }
+        .cover {
+            background: linear-gradient(135deg, #0b0b2a 0%, #1a1a4e 30%, #16213e 60%, #0f3460 100%);
+            color: #fff; padding: 80px 40px; text-align: center;
+            margin: -40px -30px 50px; border-radius: 0 0 24px 24px;
+        }
+        .cover h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; }
+        .cover .subtitle { font-size: 1.05rem; color: #a0a0d0; }
+        .cover .badge {
+            display: inline-block; margin-top: 20px; padding: 6px 20px;
+            background: rgba(123,47,247,0.3); color: #c0b0ff;
+            border-radius: 20px; font-size: 0.9rem;
+        }
+        h2 {
+            font-size: 1.55rem; color: #1a1a2e;
+            border-left: 4px solid #7b2ff7; padding-left: 14px;
+            margin: 48px 0 18px;
+        }
+        h3 { font-size: 1.2rem; color: #2a2a4e; margin: 28px 0 12px; }
+        h4 { font-size: 1.05rem; color: #444; margin: 20px 0 10px; }
+        p { margin-bottom: 14px; }
+        ul, ol { margin: 10px 0 16px 24px; }
+        li { margin-bottom: 5px; }
+        a { color: #6a1fe7; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table {
+            width: 100%; border-collapse: collapse;
+            margin: 16px 0 22px; font-size: 0.93rem;
+        }
+        table th, table td {
+            border: 1px solid #d8d8e8;
+            padding: 10px 14px; text-align: left;
+        }
+        table th {
+            background: #e8ecf8; color: #2a2a4e;
+            font-weight: 700; white-space: nowrap;
+        }
+        table tr:nth-child(even) { background: #f8f9ff; }
+        code {
+            background: #f0f0f8; padding: 2px 7px;
+            border-radius: 4px; font-size: 0.9em;
+            font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+        }
+        pre {
+            background: #1a1a2e; color: #e0e0ff;
+            padding: 18px 22px; border-radius: 10px;
+            overflow-x: auto; font-size: 0.88rem;
+            line-height: 1.6; margin: 14px 0 22px;
+            font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+        }
+        pre code {
+            background: none; padding: 0; color: inherit;
+            font-size: inherit;
+        }
+        blockquote {
+            border-left: 3px solid #7b2ff7;
+            background: #f0f0f8; padding: 12px 18px;
+            margin: 14px 0 20px; color: #555;
+            border-radius: 0 8px 8px 0;
+        }
+        .arch-box {
+            background: #1a1a2e; color: #e0e0ff;
+            padding: 16px 20px; border-radius: 10px;
+            font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+            font-size: 0.82rem; line-height: 1.45;
+            overflow-x: auto; margin: 12px 0 20px;
+            white-space: pre;
+        }
+        .flow-box {
+            background: #1a1a2e; color: #a0d0ff;
+            padding: 16px 20px; border-radius: 10px;
+            font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+            font-size: 0.82rem; line-height: 1.45;
+            overflow-x: auto; margin: 12px 0 20px;
+            white-space: pre;
+        }
+        .highlight { color: #17a2b8; font-weight: 600; }
+        hr { border: none; border-top: 1px solid #d8d8e8; margin: 40px 0; }
+        .footer {
+            text-align: center; color: #999; font-size: 0.85rem;
+            margin-top: 60px; padding-top: 30px;
+            border-top: 1px solid #d8d8e8;
+        }
+        @media print { .cover { background:#fff!important; color:#000!important; } }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<div class="cover">
+    <h1>TravelFace</h1>
+    <div class="subtitle">基于人脸画像与情绪识别的个性化旅游推荐系统 · 技术文档</div>
+    <div class="badge">纯 NumPy 视觉管线 · 零外部依赖 · Streamlit 全栈</div>
+</div>
+
+<h2>一、项目概述</h2>
+
+<h3>1.1 项目背景</h3>
+<p>随着人工智能技术的快速发展，个性化推荐系统已广泛应用于电商、音乐、视频等领域。然而在旅游行业，传统的推荐方式仍主要依赖用户的历史浏览记录和评分数据，未能充分利用用户的即时情绪状态和视觉肖像信息。本项目创新性地将计算机视觉人脸检测、用户画像分析、情绪识别与 AIGC 智能体相结合，构建了一套"拍张照片即可获得专属旅行路线"的智能推荐系统。</p>
+
+<h3>1.2 核心功能</h3>
+<table>
+    <tr><th>功能模块</th><th>描述</th></tr>
+    <tr><td><strong>人脸检测</strong></td><td>基于纯 NumPy 的 YCbCr 肤色检测算法，零外部依赖，精准定位照片中人脸位置与数量</td></tr>
+    <tr><td><strong>用户画像</strong></td><td>基于图像特征分析（亮度梯度的年龄段估计，RGB 通道比的性别推测），构建用户基础画像</td></tr>
+    <tr><td><strong>情绪识别</strong></td><td>基于面部亮度和对比度特征的七种情绪分类（开心/悲伤/愤怒/惊讶/恐惧/厌恶/中性）</td></tr>
+    <tr><td><strong>旅游推荐</strong></td><td>集成 OpenAI 兼容大语言模型 API，根据画像+情绪生成 3 条个性化路线</td></tr>
+    <tr><td><strong>优雅降级</strong></td><td>所有视觉分析模块均内置兜底机制，不可用时自动降级为估测值</td></tr>
+</table>
+
+<h3>1.3 技术亮点</h3>
+<ul>
+    <li><strong>零外部视觉依赖</strong>：人脸检测/用户画像/情绪识别均基于纯 NumPy + Pillow，无 OpenCV / MediaPipe / DeepFace / TensorFlow 依赖</li>
+    <li><strong>极速启动</strong>：首次运行即开即用，无模型下载等待，总安装体积 &lt; 50MB</li>
+    <li><strong>双模式推荐</strong>：支持接入 OpenAI 兼容 API，未配置 API Key 时自动切换到内置模拟推荐</li>
+    <li><strong>双主题 UI</strong>：暗色/浅色模式自动适配，按钮/Metric/卡片均带悬停放大发光阴影动效</li>
+</ul>
+
+<hr>
+
+<h2>二、系统架构</h2>
+
+<h3>2.1 架构设计</h3>
+<div class="arch-box">
+┌──────────────────────────────────────────────────────────┐
+│                    Streamlit 前端 (app.py)                 │
+│  ┌──────────┐  ┌──────────────┐  ┌─────────────────────┐  │
+│  │ 文件上传  │  │ 分析结果展示  │  │ 旅行卡片渲染(HTML)   │  │
+│  └──────────┘  └──────────────┘  └─────────────────────┘  │
+├──────────────────────────────────────────────────────────┤
+│                   UI 组件层 (src/ui)                       │
+│  ┌──────────────────┐  ┌────────────────────────────────┐ │
+│  │ inject_custom_css │  │ render_travel_card / render_   │ │
+│  │ (双重主题CSS注入)  │  │ analysis_summary (组件渲染)    │ │
+│  └──────────────────┘  └────────────────────────────────┘ │
+├──────────────────────────────────────────────────────────┤
+│                   视觉分析层 (src/vision)                   │
+│  ┌──────────────┐  ┌─────────────┐  ┌──────────────────┐  │
+│  │ FaceDetector │  │ UserProfiler │  │ EmotionRecognizer│  │
+│  │ (NumPy YCbCr │  │ (NumPy 亮度  │  │ (NumPy 亮度/     │  │
+│  │  肤色检测)    │  │  /RGB 通道比)│  │  对比度分析)     │  │
+│  └──────────────┘  └─────────────┘  └──────────────────┘  │
+├──────────────────────────────────────────────────────────┤
+│                    LLM 推荐层 (src/llm)                     │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │              TravelAgent                             │ │
+│  │  ┌─────────────────┐   ┌───────────────────────────┐ │ │
+│  │  │ OpenAI 兼容 API  │   │ mock 模拟推荐 (无 API 时)  │ │ │
+│  │  └─────────────────┘   └───────────────────────────┘ │ │
+│  └──────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────┘
+</div>
+
+<h3>2.2 数据流</h3>
+<div class="flow-box">
+用户上传照片 → PIL.Image.open() → RGB ndarray
+                                       │
+                              FaceDetector.detect()
+                             (YCbCr 肤色检测 + Flood Fill)
+                                       │
+                              ┌────────┴────────┐
+                       UserProfiler         EmotionRecognizer
+                      (图像亮度/红润度)     (亮度/对比度分析)
+                              └────────┬─────────┘
+                                       ▼
+                              analyze_image() 聚合
+                         {face_count, faces, crowd_type, tags}
+                                       │
+                              TravelAgent.generate()
+                              ┌────────┴────────┐
+                         有 API Key          无 API Key
+                        OpenAI 调用         mock_response()
+                              └────────┬─────────┘
+                                       ▼
+                              {routes: [...]}
+                                       │
+                              render_travel_cards()
+                              (st.html 直出 HTML)
+</div>
+
+<h3>2.3 目录结构</h3>
+<div class="arch-box">
+travelface/
+├── app.py                     # Streamlit 主入口
+├── config.py                  # 配置管理（环境变量）
+├── requirements.txt           # Python 依赖（零原生扩展）
+├── .env.example               # 环境变量模板
+├── run.bat                    # Windows 一键启动脚本
+├── src/
+│   ├── vision/
+│   │   ├── __init__.py        # 聚合分析入口
+│   │   ├── face_detector.py   # 人脸检测（YCbCr 肤色）
+│   │   ├── user_profiler.py   # 用户画像（亮度/RGB 比）
+│   │   └── emotion_recognizer.py  # 情绪识别（亮度/对比度）
+│   ├── llm/
+│   │   └── travel_agent.py    # 旅游推荐 Agent
+│   └── ui/
+│       └── components.py      # UI 组件 + 双重主题 CSS
+├── utils/
+│   └── helpers.py             # 工具函数（Pillow 图像处理）
+└── docs/
+</div>
+
+<hr>
+
+<h2>三、技术选型</h2>
+
+<table>
+    <tr><th>技术</th><th>版本</th><th>用途</th><th>选型理由</th></tr>
+    <tr><td><strong>Streamlit</strong></td><td>1.58+</td><td>Web 框架</td><td>纯 Python 构建，无需前端代码</td></tr>
+    <tr><td><strong>NumPy</strong></td><td>1.24+</td><td>矩阵运算</td><td>底层图像运算，零额外依赖</td></tr>
+    <tr><td><strong>Pillow</strong></td><td>10.0+</td><td>图像处理</td><td>纯 Python，替代 OpenCV</td></tr>
+    <tr><td><strong>OpenAI SDK</strong></td><td>1.3+</td><td>LLM 调用</td><td>通用兼容接口</td></tr>
+    <tr><td><strong>Requests</strong></td><td>2.31+</td><td>HTTP 客户端</td><td>OpenAI SDK 底层</td></tr>
+    <tr><td><strong>Python-dotenv</strong></td><td>1.0+</td><td>环境变量</td><td>管理 API Key</td></tr>
+</table>
+
+<h3>选型对比：为什么不使用 OpenCV / MediaPipe / DeepFace</h3>
+<table>
+    <tr><th>依赖库</th><th>问题</th><th>最终方案</th></tr>
+    <tr><td>opencv-python-headless</td><td>Python 3.13+ 上无预编译 wheel，需源码编译 <code>Python.h</code></td><td>❌ 用 Pillow 替代</td></tr>
+    <tr><td>mediapipe</td><td>内部硬依赖 <code>cv2</code>，Python 3.14 上连锁失败</td><td>❌ 用纯 NumPy 替代</td></tr>
+    <tr><td>deepface</td><td>依赖 TensorFlow (~600MB)，Streamlit Cloud 资源超限</td><td>❌ 用启发式算法替代</td></tr>
+    <tr><td>tensorflow</td><td>安装体积巨大，编译时间长</td><td>❌ 移除</td></tr>
+</table>
+
+<h3>选型对比：人脸检测</h3>
+<table>
+    <tr><th>方案</th><th>准确率</th><th>依赖</th><th>离线可用</th><th>最终选择</th></tr>
+    <tr><td>MediaPipe BlazeFace</td><td>⭐⭐⭐⭐</td><td>mediapipe → cv2</td><td>❌ Python 3.14 不兼容</td><td>❌</td></tr>
+    <tr><td>OpenCV Haar Cascade</td><td>⭐⭐</td><td>opencv-python-headless</td><td>❌ 无 wheel</td><td>❌</td></tr>
+    <tr><td>RetinaFace (DeepFace)</td><td>⭐⭐⭐⭐</td><td>tensorflow</td><td>❌ 体积过大</td><td>❌</td></tr>
+    <tr class="highlight"><td><strong>纯 NumPy YCbCr 肤色</strong></td><td>⭐⭐⭐</td><td>零依赖</td><td>✅</td><td>✅ <strong>最终采用</strong></td></tr>
+</table>
+
+<hr>
+
+<h2>四、模块详解</h2>
+
+<h3>4.1 人脸检测模块 (FaceDetector)</h3>
+<p><strong>算法</strong>：YCbCr 色彩空间肤色检测 + Flood Fill 连通域分析</p>
+<p>将 RGB 转换到 YCbCr 色彩空间，肤色在 Cb-Cr 平面具有稳定的聚类区间（Cb 77~127, Cr 133~173），该区间由学术界多年肤色建模确定，对不同人种和光照具有较好鲁棒性。</p>
+
+<p><strong>处理流程</strong>：</p>
+<div class="flow-box">
+RGB 图像 → float32 → Cb/Cr 颜色空间转换
+    → 肤色掩膜 = (77≤Cb≤127) & (133≤Cr≤173)
+    → Flood Fill 连通域提取（步长2加速扫描）
+    → 六层筛选 → 取综合打分最高唯一区域
+    → 12% padding → 返回 [{box, crop, detector}]
+</div>
+
+<p><strong>六层筛选校验</strong>：</p>
+<table>
+    <tr><th>校验层</th><th>阈值</th><th>作用</th></tr>
+    <tr><td><strong>尺寸</strong></td><td>占图片 0.8%~35%</td><td>排除过小噪点和过大背景</td></tr>
+    <tr><td><strong>像素数</strong></td><td>≥ 200</td><td>排除零碎肤色散点</td></tr>
+    <tr><td><strong>纵横比</strong></td><td>0.6~1.7</td><td>人脸近似正方形，排除长条形区域</td></tr>
+    <tr><td><strong>填充率</strong></td><td>≥ 35%</td><td>人脸是实心的，排除散点状区域</td></tr>
+    <tr><td><strong>位置</strong></td><td>中心在画面 5%~60% 高度</td><td>人脸不可能在画面极底部</td></tr>
+    <tr><td><strong>综合打分</strong></td><td>填充率×0.5 + 位置×0.3 + 面积×0.2</td><td>取最优唯一区域</td></tr>
+</table>
+
+<p><strong>降级机制</strong>：肤色像素占比 &lt; 1.2% 或所有区域未通过筛选时，自动降级为画面中心偏上的智能猜测（30% × 35%）。</p>
+
+<div class="page-break"></div>
+
+<h3>4.2 用户画像模块 (UserProfiler)</h3>
+<p><strong>算法</strong>：基于图像特征的启发式分析</p>
+<p><strong>年龄估计</strong>（基于面部区域平均亮度）：</p>
+<ul>
+    <li><code>brightness &lt; 100</code> → 中老年（较暗肤色/皱纹吸光）</li>
+    <li><code>brightness &gt; 180</code> → 少年（年轻肌肤反光强）</li>
+    <li><code>100 ≤ brightness ≤ 180</code> → 青年</li>
+</ul>
+<p><strong>性别推测</strong>（基于 R/(G+B) 皮肤红润度）：</p>
+<ul>
+    <li><code>R/(G+B) &gt; 1.1</code> → 女性</li>
+    <li><code>R/(G+B) ≤ 1.1</code> → 男性</li>
+</ul>
+
+<h3>4.3 情绪识别模块 (EmotionRecognizer)</h3>
+<p><strong>算法</strong>：基于面部亮度和对比度的启发式分类</p>
+<table>
+    <tr><th>条件</th><th>判定情绪</th></tr>
+    <tr><td>亮度 &gt; 180 且 对比度 &gt; 40</td><td>开心（笑容使面部更亮、纹路增多）</td></tr>
+    <tr><td>亮度 &lt; 120</td><td>悲伤（低沉表情使面部偏暗）</td></tr>
+    <tr><td>对比度 &lt; 25</td><td>中性（面部肌肉放松、纹理均匀）</td></tr>
+    <tr><td>其他</td><td>中性（兜底）</td></tr>
+</table>
+<p><strong>双模式设计</strong>：模块同时支持 DeepFace 调用（若本地已安装），DeepFace 不可用时自动降级为上述启发式算法。</p>
+
+<h3>4.4 旅游推荐模块 (TravelAgent)</h3>
+<p><strong>双模式切换</strong>：</p>
+<table>
+    <tr><th>模式</th><th>触发条件</th><th>实现</th></tr>
+    <tr><td><strong>LLM 模式</strong></td><td>Secrets 中有 API Key</td><td>调用 OpenAI 兼容 API，System Prompt 引导输出结构化 JSON</td></tr>
+    <tr><td><strong>模拟模式</strong></td><td>未配置 API Key</td><td>内置 12 条路线，覆盖开心/悲伤/中性三种情绪</td></tr>
+</table>
+<p><strong>模拟推荐覆盖</strong>：</p>
+<table>
+    <tr><th>情绪</th><th>路线1</th><th>路线2</th><th>路线3</th></tr>
+    <tr><td>负面</td><td>海边治愈 🌊</td><td>山林静修 🏔️</td><td>艺术疗愈 🎨</td></tr>
+    <tr><td>开心</td><td>活力城市 🏙️</td><td>乐园狂欢 🎢</td><td>户外探险 🏕️</td></tr>
+    <tr><td>中性</td><td>古城慢时光 🏮</td><td>温泉疗愈 ♨️</td><td>文化朝圣 📿</td></tr>
+</table>
+
+<hr>
+
+<h2>五、UI 设计</h2>
+<h3>5.1 双主题设计</h3>
+<p><strong>暗色模式</strong>（默认）：深蓝紫渐变背景 + <code>rgba(255,255,255,0.06)</code> 半透明卡片 + <code>#e0e0ff</code> 浅色文字</p>
+<p><strong>浅色模式</strong>（<code>[data-theme="light"]</code> 覆盖）：淡蓝灰渐变背景 + <code>rgba(0,0,0,0.04)</code> 浅灰卡片 + <code>#2a2a4e</code> 深色文字</p>
+
+<h3>5.2 交互动效</h3>
+<table>
+    <tr><th>元素</th><th>悬停效果</th><th>CSS 实现</th></tr>
+    <tr><td>按钮</td><td>放大 1.04x + 紫光阴影</td><td><code>transform: scale(1.04)</code></td></tr>
+    <tr><td>Metric 卡片</td><td>上移 2px + 紫光阴影</td><td><code>transform: translateY(-2px)</code></td></tr>
+    <tr><td>旅行卡片</td><td>上移 4px + 深影</td><td><code>transform: translateY(-4px)</code></td></tr>
+</table>
+
+<h3>5.3 HTML 渲染方案</h3>
+<p>使用 <code>st.html()</code> 直出 HTML，绕过 Markdown 解析器。文字颜色通过 CSS class（<code>fd-title</code>/<code>fd-label</code>/<code>fd-emotion</code>/<code>fd-conf</code>）控制，利用 <code>[data-theme]</code> 自动适配。</p>
+
+<div class="page-break"></div>
+
+<hr>
+<h2>六、部署说明</h2>
+
+<h3>6.1 环境要求</h3>
+<ul>
+    <li>Python 3.11+（任意版本均可，无原生扩展编译需求）</li>
+    <li>Windows / macOS / Linux</li>
+</ul>
+
+<h3>6.2 本地安装</h3>
+<pre><code>cd travelface
+python -m venv venv
+venv\Scripts\activate          # Windows
+pip install -r requirements.txt
+streamlit run app.py --server.port 8501</code></pre>
+
+<h3>6.3 依赖清单</h3>
+<pre><code>streamlit>=1.28.0       # Web 框架
+Pillow>=10.0.0          # 图像处理
+numpy>=1.24.0           # 矩阵运算
+requests>=2.31.0        # HTTP 客户端
+openai>=1.3.0           # LLM API
+python-dotenv>=1.0.0    # 环境变量</code></pre>
+<p>全部纯 Python 包，零 C 扩展编译，任意平台开箱即用。</p>
+
+<h3>6.4 Streamlit Cloud Secrets</h3>
+<pre><code>OPENAI_API_KEY = "sk-xxxxxxxx"
+LLM_BASE_URL = "https://ark.cn-beijing.volces.com/api/v3"
+LLM_MODEL_NAME = "doubao-1.5-pro-32k"</code></pre>
+
+<hr>
+
+<h2>七、开发问题与解决方案</h2>
+
+<h3>问题1：OpenCV 在 Python 3.14 上编译失败</h3>
+<p><strong>现象</strong>：<code>pip install opencv-python-headless</code> → <code>fatal error: Python.h: No such file or directory</code></p>
+<p><strong>解决</strong>：完全移除 OpenCV，用 Pillow 替代所有图像处理操作。</p>
+
+<h3>问题2：MediaPipe 隐式依赖 cv2 导致连锁失败</h3>
+<p><strong>解决</strong>：移除 MediaPipe，人脸检测改用纯 NumPy YCbCr 肤色检测算法。</p>
+
+<h3>问题3：DeepFace + TensorFlow 安装体积过大</h3>
+<p><strong>解决</strong>：移除两个包，用户画像和情绪识别改用NumPy 图像特征启发式算法。</p>
+
+<h3>问题4：浅色模式下文字完全不可见</h3>
+<p><strong>解决</strong>：为所有暗色模式样式添加 <code>[data-theme="light"]</code> 浅色覆盖规则。</p>
+
+<h3>问题5：肤色检测误判多人脸（迭代记录）</h3>
+<p><strong>第一阶段</strong>：墙壁/衣服误判 → 添加 RGB 双重校验</p>
+<p><strong>第二阶段</strong>：RGB 过严导致漏检 → 移除 RGB 约束，恢复经典 YCbCr</p>
+<p><strong>第三阶段</strong>：单人被判定为 3~4 人 → 改为"只取综合打分最高 1 个区域"</p>
+<p><strong>最终方案</strong>：宽松 YCbCr + 六层轻量筛选，取唯一最优结果</p>
+
+<h3>问题6：部署版缺少悬停动效</h3>
+<p><strong>解决</strong>：恢复完整悬停动效系统，暗色/浅色独立适配。</p>
+
+<hr>
+
+<h2>八、总结与展望</h2>
+
+<h3>8.1 项目总结</h3>
+<ol>
+    <li><strong>零外部视觉依赖</strong>：三大模块均基于纯 NumPy + Pillow</li>
+    <li><strong>跨平台兼容</strong>：全部纯 Python 包，任意平台可运行</li>
+    <li><strong>双模式推荐</strong>：LLM + 模拟推荐自由切换</li>
+    <li><strong>双主题 UI</strong>：暗色/浅色自动适配 + 悬停动效</li>
+    <li><strong>优雅降级</strong>：每个模块均内置兜底机制</li>
+</ol>
+
+<h3>8.2 改进方向</h3>
+<ol>
+    <li>模型轻量化：集成 ONNX/TFLite 小型 CNN</li>
+    <li>实时摄像头：扩展 WebRTC 实时视频流</li>
+    <li>图片方案：接入 Pexels/Unsplash 官方 API</li>
+    <li>多模态融合：语音文字情绪交叉验证</li>
+    <li>用户系统：数据库记录历史画像演化</li>
+</ol>
+
+<div class="footer">
+    <p>TravelFace · 计算机视觉课设项目 · 纯 NumPy 视觉管线</p>
+    <p>GitHub: github.com/luyi14-bits/travelface</p>
+</div>
+
+</div>
+</body>
+</html>

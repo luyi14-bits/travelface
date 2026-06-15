@@ -14,7 +14,7 @@ class EmotionRecognizer:
         "neutral": "中性",
     }
 
-    def __init__(self):
+    def __init__(self, prewarm: bool = False):
         self._emotions = list(self._EMOTION_MAP.keys())
         self._available = self._check_dependencies()
 

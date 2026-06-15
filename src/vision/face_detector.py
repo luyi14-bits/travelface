@@ -1,4 +1,3 @@
-import cv2
 import mediapipe as mp
 import numpy as np
 from mediapipe.tasks import python as mp_python
@@ -33,8 +32,7 @@ class FaceDetector:
 
     def detect(self, image: np.ndarray) -> list[dict]:
         h, w = image.shape[:2]
-        rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image)
 
         base_options = mp_python.BaseOptions(model_asset_path=_get_model_path())
         options = vision.FaceDetectorOptions(

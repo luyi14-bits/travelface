@@ -12,279 +12,118 @@ def inject_custom_css() -> None:
         /* ===== 全局背景 ===== */
         .stApp {
             background: linear-gradient(135deg, #0b0b2a 0%, #1a1a4e 30%, #16213e 60%, #0f3460 100%);
-            background-attachment: fixed;
         }
 
-        /* ===== 全局文字高对比度 ===== */
-        [data-testid="stMarkdownContainer"] {
-            color: #e0e0ff;
-        }
-        [data-testid="stCaptionContainer"] {
-            color: #a0a0d0;
-        }
-        /* 白色底组件保持深色文字 */
-        [data-testid="stNotification"] {
-            color: #1a1a2e !important;
-        }
-        [data-testid="stNotification"] p {
-            color: #1a1a2e !important;
-        }
-        input, textarea, [data-baseweb="input"] {
-            color: #e0e0ff !important;
-        }
-        textarea {
-            background: rgba(255, 255, 255, 0.85) !important;
-            border-color: rgba(123, 47, 247, 0.4) !important;
-            color: #1a1a2e !important;
-        }
-        textarea::placeholder {
-            color: #8888aa !important;
-        }
-        [data-baseweb="input"] input {
-            color: #e0e0ff !important;
-        }
+        /* ===== 全局文字颜色 ===== */
+        .stMarkdown, .stCaption { color: #e0e0ff; }
 
-        /* ===== 主内容区域玻璃拟态 ===== */
-        .stMain, section[data-testid="stSidebar"] > div:first-child {
-            background: transparent !important;
-        }
-        div[data-testid="stVerticalBlock"] > div[style*="flex"] {
-            gap: 0.5rem;
-        }
-
-        /* ===== 标题光效 ===== */
+        /* ===== 标题 ===== */
         h1 {
-            background: linear-gradient(90deg, #00d2ff, #7b2ff7, #ff6b9d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 2.8rem !important;
-            font-weight: 800 !important;
+            color: #fff !important;
             text-align: center;
-            animation: titlePulse 3s ease-in-out infinite;
-            filter: drop-shadow(0 0 20px rgba(0,210,255,0.3));
+            font-weight: 800;
         }
-        @keyframes titlePulse {
-            0%, 100% { filter: drop-shadow(0 0 20px rgba(0,210,255,0.3)); }
-            50% { filter: drop-shadow(0 0 40px rgba(123,47,247,0.5)); }
-        }
-
         h2 {
-            color: #e0e0ff !important;
+            color: #fff !important;
             border-left: 4px solid #7b2ff7;
-            padding-left: 16px;
+            padding-left: 12px;
         }
 
-        h3 {
-            color: #c0c0ff !important;
+        /* ===== 按钮 ===== */
+        .stButton button {
+            background: linear-gradient(135deg, #7b2ff7, #00d2ff);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
         }
 
-        /* ===== 上传区域 ===== */
-        section[data-testid="stFileUploader"] {
-            background: rgba(255,255,255,0.05);
-            border: 2px dashed rgba(123,47,247,0.4) !important;
-            border-radius: 16px !important;
-            transition: all 0.3s ease;
-        }
-        section[data-testid="stFileUploader"]:hover {
-            border-color: rgba(123,47,247,0.8) !important;
-            background: rgba(255,255,255,0.08);
-        }
-
-        /* ===== 按钮动效 ===== */
-        .stButton > button {
-            background: linear-gradient(135deg, #7b2ff7, #00d2ff) !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 12px !important;
-            padding: 12px 32px !important;
-            font-weight: 700 !important;
-            font-size: 16px !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            box-shadow: 0 4px 20px rgba(123,47,247,0.3);
-        }
-        .stButton > button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 40px rgba(123,47,247,0.5), 0 0 60px rgba(0,210,255,0.2) !important;
-        }
-        .stButton > button:active {
-            transform: scale(0.98);
-        }
-
-        /* ===== 分析结果 Metric 卡片 ===== */
-        div[data-testid="stMetric"] {
+        /* ===== Metric 卡片 ===== */
+        [data-testid="stMetric"] {
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 16px;
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        div[data-testid="stMetric"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(123,47,247,0.2);
-        }
-        div[data-testid="stMetric"] label {
-            color: #a0a0d0 !important;
-        }
-        div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
-            color: #ffffff !important;
-            font-weight: 700 !important;
+            border-radius: 14px;
+            padding: 12px 16px;
         }
 
-        /* ===== 旅行卡片 ===== */
+        /* ===== 旅行卡片（通过 st.html 渲染，与 Streamlit 内部结构隔离） ===== */
         .travel-card {
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
+            border-radius: 18px;
             overflow: hidden;
-            margin: 24px 0;
-            backdrop-filter: blur(12px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin: 20px 0;
         }
-        .travel-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 40px rgba(123,47,247,0.15);
-        }
-        .travel-card-body {
-            padding: 24px;
-        }
+        .travel-card-body { padding: 20px; }
         .travel-card-title {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: #fff;
             margin-bottom: 12px;
         }
         .travel-card-meta {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
+            display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px;
         }
         .travel-card-meta span {
             background: rgba(123,47,247,0.2);
             color: #c0c0ff;
-            padding: 4px 14px;
-            border-radius: 20px;
+            padding: 4px 12px;
+            border-radius: 18px;
             font-size: 13px;
-            border: 1px solid rgba(123,47,247,0.3);
         }
         .travel-card-reason {
             color: #a0a0d0;
             font-style: italic;
             border-left: 3px solid #7b2ff7;
-            padding-left: 16px;
-            margin-bottom: 16px;
+            padding-left: 14px;
+            margin-bottom: 14px;
         }
         .travel-card-tags {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
+            display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
         }
         .travel-card-tag {
             background: linear-gradient(135deg, rgba(0,210,255,0.15), rgba(123,47,247,0.15));
             color: #90d0ff;
-            padding: 4px 14px;
-            border-radius: 14px;
+            padding: 4px 12px;
+            border-radius: 12px;
             font-size: 12px;
         }
-
-        /* ===== 卡片封面 ===== */
         .card-cover {
-            width: 100%;
-            height: 220px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
+            height: 180px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
         }
-        .card-cover-icon {
-            font-size: 4rem;
-            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
-            animation: iconFloat 3s ease-in-out infinite;
-        }
-        @keyframes iconFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
+        .card-cover-icon { font-size: 3.5rem; }
         .card-cover-dest {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: rgba(255,255,255,0.9);
-            text-shadow: 0 2px 12px rgba(0,0,0,0.4);
-            letter-spacing: 4px;
-            margin-top: 8px;
-        }
-        .card-cover-shimmer {
-            position: absolute;
-            top: 0; left: -100%;
-            width: 60%;
-            height: 100%;
-            background: linear-gradient(90deg,
-                transparent 0%,
-                rgba(255,255,255,0.05) 40%,
-                rgba(255,255,255,0.12) 50%,
-                rgba(255,255,255,0.05) 60%,
-                transparent 100%
-            );
-            animation: shimmer 3s ease-in-out infinite;
-        }
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 200%; }
+            font-size: 1.4rem; font-weight: 800;
+            color: rgba(255,255,255,0.95);
+            letter-spacing: 3px; margin-top: 8px;
         }
 
-        /* ===== 行程日卡片 ===== */
-        .itinerary-days {
-            display: flex;
-            gap: 12px;
-            margin-top: 16px;
-        }
+        .itinerary-days { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
         .itinerary-day {
-            flex: 1;
+            flex: 1; min-width: 180px;
             background: rgba(255,255,255,0.04);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 10px; padding: 14px;
             border: 1px solid rgba(255,255,255,0.06);
         }
-        .itinerary-day strong {
-            color: #7b2ff7;
-            display: block;
-            margin-bottom: 8px;
-        }
-        .itinerary-spot {
-            color: #d0d0f0;
-            font-size: 13px;
-            padding: 2px 0;
-        }
+        .itinerary-day strong { color: #7b2ff7; display: block; margin-bottom: 8px; }
+        .itinerary-spot { color: #d0d0f0; font-size: 13px; padding: 2px 0; }
         .itinerary-food {
-            color: #ff9f43;
-            font-size: 12px;
-            margin-top: 8px;
-            padding-top: 8px;
+            color: #ff9f43; font-size: 12px;
+            margin-top: 8px; padding-top: 8px;
             border-top: 1px solid rgba(255,255,255,0.06);
         }
 
-        /* ===== 人脸分析弹窗 ===== */
         .face-detail-card {
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            backdrop-filter: blur(8px);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+            color: #e0e0ff;
         }
-
-        /* ===== Scrollbar ===== */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
-        ::-webkit-scrollbar-thumb { background: rgba(123,47,247,0.3); border-radius: 3px; }
-
-        /* ===== 关闭不需要的元素 ===== */
-        footer { visibility: hidden; }
         </style>
         """),
         unsafe_allow_html=True,
@@ -319,13 +158,7 @@ def _get_travel_card_cover(destination: str, index: int) -> str:
         ("#0f3460", "#00d2ff"),
     ]
     c1, c2 = colors[index % len(colors)]
-    return f"""
-    <div class="card-cover" style="background:linear-gradient(135deg,{c1} 0%,{c2} 100%);">
-        <div class="card-cover-icon">{icon}</div>
-        <div class="card-cover-dest">{destination}</div>
-        <div class="card-cover-shimmer"></div>
-    </div>
-    """
+    return f'<div class="card-cover" style="background:linear-gradient(135deg,{c1} 0%,{c2} 100%);"><div class="card-cover-icon">{icon}</div><div class="card-cover-dest">{destination}</div></div>'
 
 
 def render_travel_card(route: dict, index: int) -> None:
@@ -361,11 +194,7 @@ def render_travel_card(route: dict, index: int) -> None:
                     f'<div class="itinerary-food">{" · ".join(day["food"])}</div>'
                 )
             days_parts.append(
-                f"""<div class="itinerary-day">
-                    <strong>{day.get('label', '')}</strong>
-                    {spots}
-                    {food_block}
-                </div>"""
+                f'<div class="itinerary-day"><strong>{day.get("label", "")}</strong>{spots}{food_block}</div>'
             )
         days_html = f'<div class="itinerary-days">{"".join(days_parts)}</div>'
 

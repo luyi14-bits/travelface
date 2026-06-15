@@ -3,46 +3,35 @@ from typing import Optional
 import numpy as np
 
 from src.vision.emotion_recognizer import EmotionRecognizer
-from src.vision.face_detector import FaceDetector
 from src.vision.user_profiler import UserProfiler
 
-_face_detector: Optional[FaceDetector] = None
 _user_profiler: Optional[UserProfiler] = None
 _emotion_recognizer: Optional[EmotionRecognizer] = None
-
-
-def _get_detector() -> FaceDetector:
-    global _face_detector
-    if _face_detector is None:
-        _face_detector = FaceDetector()
-    return _face_detector
 
 
 def _get_profiler() -> UserProfiler:
     global _user_profiler
     if _user_profiler is None:
-        _user_profiler = UserProfiler()
+        _user_profiler = UserProfiler(prewarm=True)
     return _user_profiler
 
 
 def _get_recognizer() -> EmotionRecognizer:
     global _emotion_recognizer
     if _emotion_recognizer is None:
-        _emotion_recognizer = EmotionRecognizer()
+        _emotion_recognizer = EmotionRecognizer(prewarm=True)
     return _emotion_recognizer
 
 
 def analyze_image(image: np.ndarray) -> dict:
-    detector = _get_detector()
-    faces = detector.detect(image)
+    h, w = image.shape[:2]
 
-    if not faces:
-        return {
-            "face_count": 0,
-            "faces": [],
-            "crowd_type": "单人",
-            "summary": "未检测到人脸",
-        }
+    face_data = {
+        "box": (0, 0, w, h),
+        "crop": image,
+        "detector": "pillow",
+    }
+    faces = [face_data]
 
     profiler = _get_profiler()
     recognizer = _get_recognizer()

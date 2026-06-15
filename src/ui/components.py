@@ -9,98 +9,86 @@ def inject_custom_css() -> None:
     st.markdown(
         textwrap.dedent("""\
         <style>
-        /* ===== 全局背景 ===== */
+        /* ===== 暗色模式全局背景 ===== */
         .stApp {
             background: linear-gradient(135deg, #0b0b2a 0%, #1a1a4e 30%, #16213e 60%, #0f3460 100%);
         }
 
-        /* ===== 全局文字颜色 ===== */
+        /* ===== 暗色模式文字 ===== */
         .stMarkdown, .stCaption { color: #e0e0ff; }
+        h1, h2 { color: #fff !important; }
 
-        /* ===== 标题 ===== */
-        h1 {
-            color: #fff !important;
-            text-align: center;
-            font-weight: 800;
-        }
-        h2 {
-            color: #fff !important;
-            border-left: 4px solid #7b2ff7;
-            padding-left: 12px;
-        }
+        /* ===== 暗色模式标题装饰 ===== */
+        h1 { text-align: center; font-weight: 800; }
+        h2 { border-left: 4px solid #7b2ff7; padding-left: 12px; }
 
-        /* ===== 按钮 ===== */
+        /* ===== 暗色模式按钮 ===== */
         .stButton button {
             background: linear-gradient(135deg, #7b2ff7, #00d2ff);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
+            color: white; border: none;
+            border-radius: 10px; font-weight: 700;
         }
 
-        /* ===== Metric 卡片 ===== */
+        /* ===== 暗色模式 Metric 卡片 ===== */
         [data-testid="stMetric"] {
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 14px;
-            padding: 12px 16px;
+            border-radius: 14px; padding: 12px 16px;
         }
+        [data-testid="stMetric"] label { color: #a0a0d0 !important; }
+        [data-testid="stMetric"] [data-testid="stMetricValue"] { color: #fff !important; }
 
-        /* ===== 旅行卡片（通过 st.html 渲染，与 Streamlit 内部结构隔离） ===== */
+        /* ===== 暗色模式 face-detail-card ===== */
+        .face-detail-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; padding: 14px; margin-bottom: 10px;
+            color: #e0e0ff;
+        }
+        .face-detail-card .fd-label { color: #c0c0ff; }
+        .face-detail-card .fd-emotion { color: #00d2ff; }
+        .face-detail-card .fd-conf { color: #a0a0d0; }
+        .face-detail-card .fd-title { color: #fff; }
+
+        /* ===== 旅行卡片 ===== */
         .travel-card {
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 18px;
-            overflow: hidden;
-            margin: 20px 0;
+            border-radius: 18px; overflow: hidden; margin: 20px 0;
         }
         .travel-card-body { padding: 20px; }
         .travel-card-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 12px;
+            font-size: 1.3rem; font-weight: 700;
+            color: #fff; margin-bottom: 12px;
         }
         .travel-card-meta {
             display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px;
         }
         .travel-card-meta span {
-            background: rgba(123,47,247,0.2);
-            color: #c0c0ff;
-            padding: 4px 12px;
-            border-radius: 18px;
-            font-size: 13px;
+            background: rgba(123,47,247,0.2); color: #c0c0ff;
+            padding: 4px 12px; border-radius: 18px; font-size: 13px;
         }
         .travel-card-reason {
-            color: #a0a0d0;
-            font-style: italic;
-            border-left: 3px solid #7b2ff7;
-            padding-left: 14px;
-            margin-bottom: 14px;
+            color: #a0a0d0; font-style: italic;
+            border-left: 3px solid #7b2ff7; padding-left: 14px; margin-bottom: 14px;
         }
         .travel-card-tags {
             display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
         }
         .travel-card-tag {
             background: linear-gradient(135deg, rgba(0,210,255,0.15), rgba(123,47,247,0.15));
-            color: #90d0ff;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
+            color: #90d0ff; padding: 4px 12px; border-radius: 12px; font-size: 12px;
         }
         .card-cover {
-            height: 180px;
-            display: flex; flex-direction: column;
+            height: 180px; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             position: relative; overflow: hidden;
         }
         .card-cover-icon { font-size: 3.5rem; }
         .card-cover-dest {
             font-size: 1.4rem; font-weight: 800;
-            color: rgba(255,255,255,0.95);
-            letter-spacing: 3px; margin-top: 8px;
+            color: rgba(255,255,255,0.95); letter-spacing: 3px; margin-top: 8px;
         }
-
         .itinerary-days { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
         .itinerary-day {
             flex: 1; min-width: 180px;
@@ -116,13 +104,61 @@ def inject_custom_css() -> None:
             border-top: 1px solid rgba(255,255,255,0.06);
         }
 
-        .face-detail-card {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 10px;
-            color: #e0e0ff;
+        /* ======================================== */
+        /* ===== LIGHT MODE 覆盖 ===== */
+        /* ======================================== */
+        [data-theme="light"] .stApp {
+            background: linear-gradient(135deg, #e8ecf8 0%, #dce4f5 30%, #eaf0fa 60%, #f0f4ff 100%);
+        }
+        [data-theme="light"] .stMarkdown,
+        [data-theme="light"] .stCaption { color: #2a2a4e !important; }
+        [data-theme="light"] h1,
+        [data-theme="light"] h2 { color: #1a1a2e !important; }
+        [data-theme="light"] h2 { border-left-color: #5a1fd7; }
+
+        [data-theme="light"] .stButton button {
+            background: linear-gradient(135deg, #6a1fe7, #0098cc);
+        }
+
+        [data-theme="light"] [data-testid="stMetric"] {
+            background: rgba(0,0,0,0.04) !important;
+            border: 1px solid rgba(0,0,0,0.08) !important;
+        }
+        [data-theme="light"] [data-testid="stMetric"] label { color: #555 !important; }
+        [data-theme="light"] [data-testid="stMetric"] [data-testid="stMetricValue"] { color: #1a1a2e !important; }
+
+        [data-theme="light"] .face-detail-card {
+            background: rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.08);
+            color: #2a2a4e;
+        }
+        [data-theme="light"] .face-detail-card .fd-label { color: #444; }
+        [data-theme="light"] .face-detail-card .fd-emotion { color: #0077b6; }
+        [data-theme="light"] .face-detail-card .fd-conf { color: #666; }
+        [data-theme="light"] .face-detail-card .fd-title { color: #1a1a2e; }
+
+        [data-theme="light"] .travel-card {
+            background: rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+        [data-theme="light"] .travel-card-title { color: #1a1a2e; }
+        [data-theme="light"] .travel-card-meta span {
+            background: rgba(100,40,220,0.1); color: #4a2a8e;
+        }
+        [data-theme="light"] .travel-card-reason { color: #555; border-left-color: #6a1fe7; }
+        [data-theme="light"] .travel-card-tag {
+            background: rgba(0,130,200,0.1);
+            color: #006494;
+        }
+        [data-theme="light"] .itinerary-day {
+            background: rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+        [data-theme="light"] .itinerary-day strong { color: #5a1fd7; }
+        [data-theme="light"] .itinerary-spot { color: #444; }
+        [data-theme="light"] .itinerary-food {
+            color: #c76b00;
+            border-top: 1px solid rgba(0,0,0,0.06);
         }
         </style>
         """),

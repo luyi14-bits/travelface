@@ -92,11 +92,11 @@ if analyze_btn and uploaded_file is not None:
                 emotion = face.get("emotion", {})
                 html = (
                     f'<div class="face-detail-card">'
-                    f'<strong style="color:#fff;">👤 #{i + 1}</strong>&nbsp;'
-                    f'<span style="color:#c0c0ff;">{profile.get("gender", "-")}</span> · '
-                    f'<span style="color:#c0c0ff;">{profile.get("age_group", "-")}</span> · '
-                    f'<span style="color:#00d2ff;">😊 {emotion.get("emotion", "-")}</span> '
-                    f'<span style="color:#a0a0d0;">({emotion.get("confidence", 0):.0%})</span>'
+                    f'<strong class="fd-title">👤 #{i + 1}</strong>&nbsp;'
+                    f'<span class="fd-label">{profile.get("gender", "-")}</span> · '
+                    f'<span class="fd-label">{profile.get("age_group", "-")}</span> · '
+                    f'<span class="fd-emotion">😊 {emotion.get("emotion", "-")}</span> '
+                    f'<span class="fd-conf">({emotion.get("confidence", 0):.0%})</span>'
                     f'</div>'
                 )
                 st.markdown(html, unsafe_allow_html=True)

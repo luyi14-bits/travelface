@@ -39,7 +39,7 @@ class TravelAgent:
 
     @property
     def available(self) -> bool:
-        return bool(config.LLM_API_KEY and config.LLM_API_KEY != "your_api_key_here")
+        return bool(config.LLM_API_KEY and config.LLM_API_KEY != "ark-38cb5bc0-6247-4302-acb7-975c96bfdb32-c95f9")
 
     def generate(self, vision_result: dict) -> dict:
         user_prompt = self._build_user_prompt(vision_result)

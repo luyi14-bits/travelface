@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/badge/Python-3.11+-blue?logo=python" alt="Python">
   <img src="https://img.shields.io/badge/Streamlit-1.58+-red?logo=streamlit" alt="Streamlit">
   <img src="https://img.shields.io/badge/Deps-6_pure_Python_pkgs-brightgreen" alt="Deps">
-  <img src="https://img.shields.io/badge/Compile-Zero_C_extensions-success" alt="No C">
+  <img src="https://img.shields.io/badge/License-AGPL--3.0-purple" alt="License">
 </p>
 
 <h1 align="center">TravelFace</h1>
@@ -151,9 +151,7 @@ From a **600MB+** heavyweight pipeline (OpenCV + MediaPipe + DeepFace + TensorFl
 | deepface | Depends on TensorFlow (~600MB) |
 | tensorflow | Too large, OOM on Streamlit Cloud |
 
-Face detection evolved through 3 iterations: over-filtering (false positives from walls/clothes) -> relaxing (missed real faces) -> over-detection (3-4 fake faces) -> best single result strategy.
-
-See [Technical Docs, Chapter 7](docs/技术文档.md) for full details.
+Face detection evolved through 3 iterations: over-filtering -> relaxing -> over-detection -> best single result strategy.
 
 ---
 
@@ -171,7 +169,15 @@ See [Technical Docs, Chapter 7](docs/技术文档.md) for full details.
 
 ## License
 
-MIT
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+See [LICENSE](LICENSE) for the full license text.
+
+Key points:
+- ✅ You can use, modify, and distribute this software freely
+- ✅ If you run a modified version on a network server, you must make the source code available
+- ❌ You cannot sublicense or hold the authors liable
+- ⚠️ Any derivative work must also be licensed under AGPL-3.0
 
 ---
 
